@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 15px;
+            color: white;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        ul {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+        }
+        ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .container {
+            width: 350px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .booking-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .booking-box {
+            width: 250px;
+            height: 150px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .booking-box:hover {
+            transform: scale(1.05);
+            background-color: #e0e0e0;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: purple;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: left;
+        }
+        .train-list {
+            margin-top: 20px;
+            padding: 10px;
+            text-align: left;
+        }
+        .train-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="profile-circle"></div>
+            <span>Book Train & Flight Ticket</span>
+        </div>
+        <ul>
+            <li><a onclick="navigateTo('home')">Home</a></li>
+            <li><a onclick="navigateTo('registration')">Registration</a></li>
+            <li><a onclick="navigateTo('login')">Login</a></li>
+            <li><a href="mailto:akshaysaini2342@gmail.com">Contact Us</a></li>
+            <li><a onclick="navigateTo('adminLogin')">Admin Login</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container">
+            <h2>Welcome! </h2>
+            <div class="booking-options">
+                <div class="booking-box" onclick="navigateTo('trainBooking')">
+                    <h3>🚆 Train Ticket Booking</h3>
+                </div>
+                <div class="booking-box" onclick="navigateTo('flightBooking')">
+                    <h3>✈ Flight Ticket Booking</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let isAdminLoggedIn = false;
+
+        function navigateTo(page) {
+            let content = document.getElementById('content');
+            
+            if (page === 'home') {
+                content.innerHTML = `<div class="container"><h2>Welcome! Please Register or Login.</h2></div>`;
+            } 
+            else if (page === 'registration') {
+                content.innerHTML = `
+                    <div class="container">
+                        <h2>Register</h2>
+                        <form id="registration-form" onsubmit="return validateRegistration()">
+                            <input type="text" id="name" placeholder="Full Name" required>
+                            <input type="text" id="username" placeholder="Username (min. 5 chars)" required>
+                            <input type="email" id="email" placeholder="Email" required>
+                            <input type="password" id="password" placeholder="Password" required>
+                            <input type="text" id="adhar" placeholder="Aadhar Number" required>
+                            <select id="nationality" required>
+                                <option value="">Select Nationality</option>
+                                <option>India</option>
+                                <option>USA</option>
+                                <option>UK</option>
+                            </select>
+                            <button type="submit" class="btn">Register</button>
+                        </form>
+                    </div>
+                `;
+            } 
+            else if (page === 'login') {
+                content.innerHTML = `
+                    <div class="container">
+                        <h2>Login</h2>
+                        <form onsubmit="return validateLogin()">
+                            <input type="email" id="login-email" placeholder="Email" required>
+                            <input type="password" id="login-password" placeholder="Password" required>
+                            <button type="submit" class="btn">Login</button>
+                        </form>
+                    </div>
+                `;
+            } 
+            else if (page === 'adminLogin') {
+                content.innerHTML = `
+                    <div class="container">
+                        <h2>Admin Login</h2>
+                        <form onsubmit="return validateAdminLogin()">
+                            <input type="text" id="admin-id" placeholder="Admin ID" required>
+                            <input type="password" id="admin-password" placeholder="Password" required>
+                            <button type="submit" class="btn">Login</button>
+                        </form>
+                    </div>
+                `;
+            } 
+            else if (page === 'trainBooking') {
+                if (!isLoggedIn) {
+                    alert("Please login first!");
+                    navigateTo('login');
+                    return;
+                }
+                content.innerHTML = `
+                    <div class="container">
+                        <h2>Train Ticket Booking</h2>
+                        <form>
+                            <label for="train-origin">Departure:</label>
+                            <select id="train-origin">
+                                <option>Dehradun</option>
+                                <option>Mumbai</option>
+                                <option>Kerela</option>
+                                <option>Ghaziabad</option>
+                            </select>
+
+                            <label for="train-destination">Arrival:</label>
+                            <select id="train-destination">
+                                <option>Dehradun</option>
+                                <option>Mumbai</option>
+                                <option>Kerela</option>
+                                <option>Ghaziabad</option>
+                            </select>
+
+                            <button type="button" class="btn" onclick="searchTrains()">Search</button>
+                        </form>
+                    </div>
+                `;
+            } 
+            else if (page === 'confirmTicket') {
+                content.innerHTML = `
+                    <div class="container">
+                        <h2>Train Options</h2>
+                        <div class="train-list" id="train-list">
+                            <!-- Train details will be displayed here -->
+                        </div>
+                    </div>
+                `;
+                displayTrainOptions();
+            }
+        }
+
+        function validateRegistration() {
+            let name = document.getElementById('name').value;
+            let username = document.getElementById('username').value;
+            let email = document.getElementById('email').value;
+            let password = document.getElementById('password').value;
+            let adhar = document.getElementById('adhar').value;
+            let nationality = document.getElementById('nationality').value;
+
+            // Store registration details in localStorage
+            localStorage.setItem('userDetails', JSON.stringify({ name, username, email, password, adhar, nationality }));
+
+            alert("Registration Successful! Please login.");
+            navigateTo('login');
+            return false; // Prevent form submission for demo
+        }
+
+        function validateLogin() {
+            let email = document.getElementById('login-email').value;
+            let password = document.getElementById('login-password').value;
+
+            let storedUser  = JSON.parse(localStorage.getItem('userDetails'));
+
+            if (storedUser  && storedUser .email === email && storedUser .password === password) {
+                isLoggedIn = true;
+                alert("Login Successful!");
+                navigateTo('trainBooking');
+                return false;
+            } else {
+                alert("Invalid Email or Password");
+                return false;
+            }
+        }
+
+        function validateAdminLogin() {
+            let adminId = document.getElementById('admin-id').value;
+            let adminPassword = document.getElementById('admin-password').value;
+
+            if (adminId === "242526" && adminPassword === "243526") {
+                isAdminLoggedIn = true;
+                alert("Admin Login Successful!");
+                // You can redirect to an admin dashboard or perform admin actions here
+                return false; // Prevent form submission for demo
+            } else {
+                alert("Invalid Admin ID or Password");
+                return false;
+            }
+        }
+
+        function searchTrains() {
+            let origin = document.getElementById('train-origin').value;
+            let destination = document.getElementById('train-destination').value;
+
+            // Navigate to confirmTicket page
+            navigateTo('confirmTicket');
+
+            // Store origin and destination for later use in confirmTicket page
+            localStorage.setItem('trainSearch', JSON.stringify({ origin, destination }));
+        }
+
+        function displayTrainOptions() {
+            let searchData = JSON.parse(localStorage.getItem('trainSearch'));
+            if (!searchData) return;
+
+            let trains = [
+                { origin: "Dehradun", destination: "Mumbai", departure: "10:00 AM", arrival: "6:00 PM" },
+                { origin: "Dehradun", destination: "Kerela", departure: "11:00 AM", arrival: "7:00 PM" },
+                { origin: "Mumbai", destination: "Dehradun", departure: "9:00 AM", arrival: "5:00 PM" },
+                { origin: "Kerela", destination: "Mumbai", departure: "1:00 PM", arrival: "9:00 PM" },
+            ];
+
+            let filteredTrains = trains.filter(train => 
+                train.origin === searchData.origin && train.destination === searchData.destination
+            );
+
+            let trainList = document.getElementById('train-list');
+            if (filteredTrains.length === 0) {
+                trainList.innerHTML = "<p>No trains found for this route.</p>";
+                return;
+            }
+
+            filteredTrains.forEach(train => {
+                trainList.innerHTML += `
+                    <div class="train-item">
+                        <h4>Train from ${train.origin} to ${train.destination}</h4>
+                        <p>Departure: ${train.departure}</p>
+                        <p>Arrival: ${train.arrival}</p>
+                    </div>
+                `;
+            });
+        }
+    </script>
+
+</body>
+</html>
